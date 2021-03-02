@@ -10,12 +10,6 @@ const Url     = require('url-parse')
 const isDev        = Env.get('NODE_ENV') === 'development';
 const DATABASE_URL = new Url(Env.get('DATABASE_URL'));
 
-console.log('---------------');
-console.log("\n");
-console.log('DATABASE_URL', DATABASE_URL);
-console.log("\n");
-console.log('---------------');
-
 module.exports = {
   /*
   | Default Connection
@@ -69,7 +63,7 @@ module.exports = {
       password: Env.get('DB_PASSWORD', DATABASE_URL.password),
       database: Env.get('DB_DATABASE', DATABASE_URL.pathname.substr(1)),
       sslmode: Env.get('PGSSLMODE'),
-      ssl: { rejectUnauthorized: false }
+      ...( isDev ? {} : { ssl: { rejectUnauthorized: !true } } ),
     },
   },
 }
