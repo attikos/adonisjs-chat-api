@@ -16,10 +16,6 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
-// Route.on('/').render('welcome')
-
-// Route.get('/', () => 'Hello Adonis')
-// Route.post('/', () => 'Hello Adonis POST')
 Route.post('user', 'UserController.index')
 
 Route
