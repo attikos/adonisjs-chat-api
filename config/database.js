@@ -5,16 +5,20 @@ const Env = use('Env')
 
 /** @type {import('@adonisjs/ignitor/src/Helpers')} */
 const Helpers = use('Helpers')
+const Url     = require('url-parse')
+
+const isDev        = Env.get('NODE_ENV') === 'development';
+const DATABASE_URL = new Url(Env.get('DATABASE_URL'));
+
+console.log('---------------');
+console.log("\n");
+console.log('DATABASE_URL', DATABASE_URL);
+console.log("\n");
+console.log('---------------');
 
 module.exports = {
   /*
-  |--------------------------------------------------------------------------
   | Default Connection
-  |--------------------------------------------------------------------------
-  |
-  | Connection defines the default connection settings to be used while
-  | interacting with SQL databases.
-  |
   */
   connection: Env.get('DB_CONNECTION', 'pg'),
 
@@ -22,12 +26,7 @@ module.exports = {
   |--------------------------------------------------------------------------
   | Sqlite
   |--------------------------------------------------------------------------
-  |
-  | Sqlite is a flat file database and can be good choice under development
-  | environment.
-  |
   | npm i --save sqlite3
-  |
   */
   sqlite: {
     client: 'sqlite3',
@@ -41,11 +40,8 @@ module.exports = {
   |--------------------------------------------------------------------------
   | MySQL
   |--------------------------------------------------------------------------
-  |
   | Here we define connection settings for MySQL database.
-  |
   | npm i --save mysql
-  |
   */
   mysql: {
     client: 'mysql',
@@ -62,20 +58,18 @@ module.exports = {
   |--------------------------------------------------------------------------
   | PostgreSQL
   |--------------------------------------------------------------------------
-  |
-  | Here we define connection settings for PostgreSQL database.
-  |
   | npm i --save pg
-  |
   */
   pg: {
     client: 'pg',
     connection: {
-      host: Env.get('DB_HOST', 'localhost'),
-      port: Env.get('DB_PORT', '5432'),
-      user: Env.get('DB_USER', 'chat_root'),
-      password: Env.get('DB_PASSWORD', ''),
-      database: Env.get('DB_DATABASE', 'chat')
-    }
-  }
+      host: Env.get('DB_HOST', DATABASE_URL.hostname),
+      port: Env.get('DB_PORT', DATABASE_URL.port),
+      user: Env.get('DB_USER', DATABASE_URL.username),
+      password: Env.get('DB_PASSWORD', DATABASE_URL.password),
+      database: Env.get('DB_DATABASE', DATABASE_URL.pathname.substr(1)),
+      sslmode: Env.get('PGSSLMODE'),
+      ssl: { rejectUnauthorized: false }
+    },
+  },
 }
