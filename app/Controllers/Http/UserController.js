@@ -96,6 +96,8 @@ class UserController {
             })
         }
         else if (_error) {
+            console.log('_error', _error);
+
             return response.json({
                 success      : 0,
                 errorMessage : 'Bad login or password'

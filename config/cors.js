@@ -1,5 +1,8 @@
 'use strict'
 
+/** @type {import('@adonisjs/framework/src/Env')} */
+const Env = use('Env')
+
 module.exports = {
   /*
   |--------------------------------------------------------------------------
@@ -16,7 +19,7 @@ module.exports = {
   | Function - Receives the current origin and should return one of the above values.
   |
   */
-  origin: ['http://127.0.0.1:8080'],
+ origin: Env.get('CORS_ORIGIN', 'http://127.0.0.1:8080'),
 
   /*
   |--------------------------------------------------------------------------
