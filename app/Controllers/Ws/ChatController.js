@@ -1,6 +1,7 @@
 'use strict'
 
 const Message = use('App/Models/Message')
+const Database = use('Database')
 
 async function saveMessage({ data, auth }) {
     const { content, type } = data;
@@ -41,12 +42,11 @@ class ChatController {
     }
 
     async onViewed (messageIdList) {
-        const messageListRs = Message
+        await Message
             .query()
             .whereIn('id', messageIdList)
             .andWhere('viewed', false)
-
-        messageListRs.update({ viewed: true })
+            .update({ viewed: true })
 
         this.socket.broadcastToAll('viewed', messageIdList)
     }
