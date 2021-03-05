@@ -21,14 +21,15 @@ class User extends Model {
         })
     }
 
-  prepared() {
-      const user = {};
+    prepared() {
+        const user = {};
 
-      user.name = this.email
-      user.id   = this.id
+        user.name  = this.email
+        user.id    = this.id
+        user.token = this.token
 
-      return user;
-  }
+        return user;
+    }
 
   /**
    * A relationship on tokens is required for auth to
