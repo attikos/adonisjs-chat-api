@@ -12,7 +12,16 @@ const User = use('App/Models/User')
  */
 class UserController {
     async register({ request, auth, response }) {
-        let user = await User.create(request.all())
+        let user
+
+        try {
+            user = await User.create(request.all())
+        }
+        catch (error) {
+            return response.json({
+                errorMessage : 'Account already exist'
+            })
+        }
 
         //generate token for user;
         let token = await auth.generate(user)
@@ -39,48 +48,15 @@ class UserController {
         }
     }
 
-    // async login({ request, response, auth }) {
-    //     const { email, password } = request.all()
-    //     let token;
-    //     let user;
-
-    //     try {
-    //         token = await auth.attempt(email, password)
-    //         // user  = await auth.getUser( token )
-    //         console.log('auth', auth);
-
-    //     } catch (error) {
-    //         console.log('error', error);
-
-    //         return response.json({ success: 0, errorMessage: 'Wrong login or password', error });
-    //     }
-
-    //     // try {
-    //     //     await auth.check();
-    //     // } catch (error) {
-    //     //     try {
-    //     //         await auth.attempt(email, password)
-    //     //     } catch (error) {
-    //     //         return response.json({ success: 0, errorMessage: 'Bad credentials' });
-    //     //     }
-    //     // }
-
-    //     return response.json({ ...token, success: 1, user });
-
-    //     // return response.json({ success: 1, user : auth.user.prepared() });
-    // }
-
     async logout({request, response, auth}) {
-        try {
-            await auth.logout()
-        }
-        catch(error) {
-            return response.json({ success: 0 });
-        }
+        const apiToken = auth.getAuthHeader()
+
+        await auth
+            .authenticator('api')
+            .revokeTokens([apiToken])
 
         return response.json({ success: 1 });
     }
-
 
   /**
    * Create/save a new user.
@@ -154,22 +130,6 @@ class UserController {
     //     })
     // }
 
-    /**
-     * Display a single user.
-     * GET users/:id
-     *
-     * @param {object} ctx
-     * @param {Request} ctx.request
-     * @param {Response} ctx.response
-     * @param {View} ctx.view
-     */
-    show ({ auth, params }) {
-        if (auth.user.id !== Number(params.id)) {
-        return 'You cannot see someone else\'s profile'
-        }
-
-        return auth.user
-    }
 
     async check({ request, response, auth }) {
         try {
