@@ -1,7 +1,6 @@
 'use strict'
 
 const Message = use('App/Models/Message')
-const Database = use('Database')
 
 async function saveMessage({ data, auth }) {
     const { content, type } = data;
