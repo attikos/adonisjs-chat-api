@@ -11,13 +11,34 @@ const User = use('App/Models/User')
  * Resourceful controller for interacting with users
  */
 class UserController {
-    async register({ request, auth, response }) {
+    async register({request, auth, response}) {
+        let {email, password, passwordConfirm} = request.all();
         let user
 
+        if (!email) {
+            return response.json({
+                errorMessage : 'Email required'
+            })
+        }
+
+        if (!password) {
+            return response.json({
+                errorMessage : 'Password required'
+            })
+        }
+
+        if (password !== passwordConfirm || !passwordConfirm) {
+            return response.json({
+                errorMessage : 'Please confirm your password'
+            })
+        }
+
         try {
-            user = await User.create(request.all())
+            user = await User.create({email, password})
         }
         catch (error) {
+            console.log('error', error);
+
             return response.json({
                 errorMessage : 'Account already exist'
             })
